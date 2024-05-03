@@ -87,3 +87,10 @@ func (event Event) Update() error {
 
 	return err
 }
+
+func (event Event) Delete() error {
+	query := `DELETE FROM events WHERE id = $1`
+	_, err := db.DB.Exec(context.Background(), query, event.ID)
+
+	return err
+}
