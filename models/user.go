@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"example.com/event-planner/db"
+	"example.com/event-planner/utils"
 )
 
 type User struct {
@@ -20,7 +21,13 @@ func (u *User) Save() error {
 	`
 
 	id := 0
-	err := db.DB.QueryRow(context.Background(), query, u.Email, u.Password).Scan(&id)
+	hashedPassword, err := utils.HashPassword(u.Password)
+
+	if err != nil {
+		return err
+	}
+
+	err = db.DB.QueryRow(context.Background(), query, u.Email, hashedPassword).Scan(&id)
 
 	if err != nil {
 		return err
