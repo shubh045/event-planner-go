@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"errors"
 
 	"example.com/event-planner/db"
 	"example.com/event-planner/utils"
@@ -34,5 +35,24 @@ func (u *User) Save() error {
 	}
 
 	u.ID = id
+	return nil
+}
+
+func (u User) ValidateCredentials() error {
+	query := `SELECT password from users WHERE email = $1`
+	row := db.DB.QueryRow(context.Background(), query, u.Email)
+	var retrievedPassword string
+	err := row.Scan(&retrievedPassword)
+
+	if err != nil {
+		return errors.New("Credentials invalid.")
+	}
+
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
+
+	if !passwordIsValid {
+		return errors.New("Credentials invalid.")
+	}
+
 	return nil
 }
