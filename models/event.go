@@ -76,7 +76,7 @@ func GetEventById(id int) (*Event, error) {
 
 }
 
-func (event Event) Update() error {
+func (event *Event) Update() error {
 	query := `
 		UPDATE events
 		SET name = $1, description = $2, location = $3, dateTime = $4
@@ -88,7 +88,7 @@ func (event Event) Update() error {
 	return err
 }
 
-func (event Event) Delete() error {
+func (event *Event) Delete() error {
 	query := `DELETE FROM events WHERE id = $1`
 	_, err := db.DB.Exec(context.Background(), query, event.ID)
 
