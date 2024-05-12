@@ -94,3 +94,17 @@ func (event *Event) Delete() error {
 
 	return err
 }
+
+func (event *Event) Register(userId int) error {
+	query := `INSERT INTO registrations(event_id, user_id) VALUES($1, $2)`
+	_, err := db.DB.Exec(context.Background(), query, event.ID, userId)
+
+	return err
+}
+
+func (event *Event) CancelRegistration(userId int) error {
+	query := `DELETE FROM registrations WHERE event_id = $1 AND user_id = $2`
+	_, err := db.DB.Exec(context.Background(), query, event.ID, userId)
+
+	return err
+}

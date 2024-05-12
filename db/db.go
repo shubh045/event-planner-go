@@ -56,7 +56,7 @@ func createTables() {
 		location TEXT NOT NULL,
 		dateTime TIMESTAMP NOT NULL,
 		user_id INT,
-		FOREIGN KEY(user_id) REFERENCES users(id	)
+		FOREIGN KEY(user_id) REFERENCES users(id)
 	)
 	`
 	_, err = DB.Exec(context.Background(), createEventsTable)
@@ -64,5 +64,21 @@ func createTables() {
 	if err != nil {
 		fmt.Println(err)
 		panic("Could not create events table.")
+	}
+
+	createRegistrationsTable := `
+		CREATE TABLE IF NOT EXISTS registrations (
+			id SERIAL PRIMARY KEY,
+			event_id INT,
+			user_id INT
+			FOREIGN KEY(event_id) REFERENCES events(id)
+			FOREIGN KEY(user_id) REFERENCES users(id)
+		)
+	`
+	_, err = DB.Exec(context.Background(), createRegistrationsTable)
+
+	if err != nil {
+		fmt.Println(err)
+		panic("Could not create registrations table.")
 	}
 }
